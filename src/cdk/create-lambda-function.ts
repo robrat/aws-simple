@@ -42,9 +42,11 @@ export function createLambdaFunction(
   const domainName = getDomainName(stackConfig);
 
   // Example: POST-foo-bar-baz-1234567
+  // v2 is used to force a different hash because CDK changed log groups from Custom::LogRetention to AWS::Logs::LogGroup
   const uniqueFunctionName = `${httpMethod}-${getNormalizedName(functionName)}-${getHash(
     functionName,
     domainName,
+    'v2',
   )}`;
 
   if (uniqueFunctionName.length > 64) {

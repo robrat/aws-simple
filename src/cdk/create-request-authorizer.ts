@@ -18,7 +18,7 @@ export function createRequestAuthorizer(
   }
 
   const domainName = getDomainName(stackConfig);
-  const functionName = `aws-simple-request-authorizer-${getHash(domainName)}`;
+  const functionName = `aws-simple-request-authorizer-${getHash(domainName, 'v2')}`;
   const functionNameHash = getHash(functionName);
 
   const logGroup = new aws_logs.LogGroup(stack, `LogGroup${functionNameHash}`, {
