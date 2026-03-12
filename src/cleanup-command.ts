@@ -31,6 +31,10 @@ export const cleanupCommand: CommandModule<{}, { readonly yes: boolean }> = {
   handler: async (args): Promise<void> => {
     print.info(`Searching unused resources for region ${region}...`);
 
+    // All stacks must be fetched without filtering (e.g. by hosted zone name)
+    // because the role cleanup below is account-wide. Fetching only a subset of
+    // stacks would cause roles from excluded stacks to be misidentified as
+    // unused and deleted
     const stacks = await findStacks();
     const allResourceIds = new Set<string>();
 
