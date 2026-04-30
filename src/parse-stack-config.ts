@@ -31,7 +31,7 @@ export type LambdaRoute = Omit<z.TypeOf<typeof LambdaRouteSchema>, 'onSynthesize
 
 export type S3Route = z.TypeOf<typeof S3RouteSchema>;
 
-const LambdaRuntimeSchema = z.enum([`20.x`, `22.x`, `LATEST`]).optional();
+const LambdaRuntimeSchema = z.enum([`20.x`, `22.x`, `24.x`, `LATEST`]).optional();
 export type LambdaRuntime = z.TypeOf<typeof LambdaRuntimeSchema>;
 
 const LambdaRouteSchema = z.object({

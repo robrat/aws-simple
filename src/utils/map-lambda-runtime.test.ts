@@ -7,6 +7,7 @@ describe(`mapLambdaRuntime()`, () => {
     expect(mapLambdaRuntime(undefined)).toEqual(aws_lambda.Runtime.NODEJS_20_X);
     expect(mapLambdaRuntime(`20.x`)).toEqual(aws_lambda.Runtime.NODEJS_20_X);
     expect(mapLambdaRuntime(`22.x`)).toEqual(aws_lambda.Runtime.NODEJS_22_X);
+    expect(mapLambdaRuntime(`24.x`)).toEqual(aws_lambda.Runtime.NODEJS_24_X);
     expect(mapLambdaRuntime(`LATEST`)).toEqual(aws_lambda.Runtime.NODEJS_LATEST);
   });
 });
