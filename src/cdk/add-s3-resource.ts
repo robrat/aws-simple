@@ -3,7 +3,7 @@ import type { aws_iam, aws_s3 } from 'aws-cdk-lib';
 
 import { addCorsPreflight } from './add-cors-preflight.js';
 import { aws_apigateway } from 'aws-cdk-lib';
-import { join } from 'path';
+import { join } from 'node:path';
 
 export interface S3ResourceConstructDependencies {
   readonly bucket: aws_s3.IBucket;

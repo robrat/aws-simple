@@ -394,6 +394,21 @@ export default () => ({
 });
 ```
 
+### S3 bucket Enryption
+
+```js
+export default () => ({
+  hostedZoneName: `example.com`,
+  s3: {
+    // <==
+    encryption: `KMS_MANAGED`, // default: S3_MANAGED
+    encryptionKeyArn: `arn:aws:kms:${aws_region}:${aws_accound}:key/${id}`, // only for type KMS, if missing AWS will generate a key
+    bucketKeyEnabled: true, // bucket key reduces encryption costs by lowering calls to AWS KMS
+  },
+  routes: [{ type: `file`, publicPath: `/`, path: `dist/index.html` }],
+});
+```
+
 ### Source maps
 
 #### Enabling source maps for a Lambda function on AWS
@@ -622,6 +637,12 @@ Note: The `onStart` hook is called before the routes are registered.
       "Effect": "Allow",
       "Action": ["iam:ListAttachedRolePolicies", "iam:DetachRolePolicy", "iam:DeleteRole"],
       "Resource": "arn:aws:iam::*:role/aws-simple-*"
+    },
+    {
+      "Sid": "AwsSimple10",
+      "Effect": "Allow",
+      "Action": ["kms:GenerateDataKey", "kms:Decrypt"],
+      "Resource": "arn:aws:kms:::key/"
     }
   ]
 }

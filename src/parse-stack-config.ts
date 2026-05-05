@@ -34,6 +34,22 @@ export type S3Route = z.TypeOf<typeof S3RouteSchema>;
 const LambdaRuntimeSchema = z.enum([`20.x`, `22.x`, `24.x`, `LATEST`]).optional();
 export type LambdaRuntime = z.TypeOf<typeof LambdaRuntimeSchema>;
 
+const S3BucketEncryptionSchema = z
+  .discriminatedUnion(`encryption`, [
+    z.object({ encryption: z.literal('S3_MANAGED') }),
+    z.object({
+      encryption: z.literal('KMS_MANAGED'),
+      bucketKeyEnabled: z.boolean().default(true).optional(),
+    }),
+    z.object({
+      encryption: z.literal('KMS'),
+      bucketKeyEnabled: z.boolean().default(true).optional(),
+      encryptionKeyArn: z.string().optional(),
+    }),
+  ])
+  .optional();
+export type S3BucketEncryption = z.TypeOf<typeof S3BucketEncryptionSchema>;
+
 const LambdaRouteSchema = z.object({
   type: z.literal(`function`),
   httpMethod: z.enum([`DELETE`, `GET`, `HEAD`, `PATCH`, `POST`, `PUT`]),
@@ -105,6 +121,7 @@ const StackConfigSchema = DomainNamePartsSchema.extend({
     .optional(),
   tags: z.record(z.string()).optional(),
   routes: z.array(z.union([LambdaRouteSchema, S3RouteSchema])).min(1),
+  s3: S3BucketEncryptionSchema,
   onSynthesize: z.function().optional(),
   onStart: z.function().optional(),
 });
