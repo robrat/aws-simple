@@ -14,35 +14,28 @@ const commandName = `cleanup`;
 
 const region = process.env[`AWS_REGION`] || process.env[`AWS_DEFAULT_REGION`];
 
-export const cleanupCommand: CommandModule<
-  {},
-  { readonly yes: boolean; readonly hostedZoneName?: string }
-> = {
+export const cleanupCommand: CommandModule<{}, { readonly yes: boolean }> = {
   command: `${commandName} [options]`,
   describe: `Deletes unused resources created by aws-simple for same region using new default region tag. 
               If resource does not contain this tag, it will be deleted even if other regions are using it.`,
 
   builder: (argv) =>
     argv
-      .options(`hosted-zone-name`, {
-        describe: `An optional hosted zone name to filter stacks`,
-        string: true,
-      })
       .options(`yes`, {
         describe: `Confirm the deletion of unused resources for region: ${region}`,
         boolean: true,
         default: false,
       })
-      .example([
-        [`npx $0 ${commandName}`],
-        [`npx $0 ${commandName} --hosted-zone-name example.com`],
-        [`npx $0 ${commandName} --yes`],
-      ]),
+      .example([[`npx $0 ${commandName}`], [`npx $0 ${commandName} --yes`]]),
 
   handler: async (args): Promise<void> => {
     print.info(`Searching unused resources for region ${region}...`);
 
-    const stacks = await findStacks(args.hostedZoneName);
+    // All stacks must be fetched without filtering (e.g. by hosted zone name)
+    // because the role cleanup below is account-wide. Fetching only a subset of
+    // stacks would cause roles from excluded stacks to be misidentified as
+    // unused and deleted
+    const stacks = await findStacks();
     const allResourceIds = new Set<string>();
 
     for (const stack of stacks) {
