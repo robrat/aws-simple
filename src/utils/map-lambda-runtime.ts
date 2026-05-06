@@ -12,6 +12,8 @@ export function mapLambdaRuntime(lambdaRuntime: LambdaRuntime): aws_lambda.Runti
       return aws_lambda.Runtime.NODEJS_20_X;
     case `22.x`:
       return aws_lambda.Runtime.NODEJS_22_X;
+    case `24.x`:
+      return aws_lambda.Runtime.NODEJS_24_X;
     case `LATEST`:
       return aws_lambda.Runtime.NODEJS_LATEST;
   }
