@@ -1,0 +1,36 @@
+name: Pre-Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pre-release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@${{ github.repository_owner }}'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Compile and test
+        run: npm run ci
+
+      - name: Prepare pre release
+        run: |
+          git_sha=$(git rev-parse --short HEAD)
+          mv package.json /tmp/package.json
+          jq --arg git_sha ${git_sha} \
+            'del(.repository)
+              | .version = .version + "-" + $git_sha
+              | .name = "@${{ github.repository_owner }}/" + .name' \
+            /tmp/package.json > package.json
+
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
